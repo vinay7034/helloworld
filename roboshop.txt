@@ -1,0 +1,56 @@
+[Unit]
+Description = Catalogue Service
+
+[Service]
+User=roboshop
+Environment=MONGO=true
+// highlight-start
+Environment=MONGO_URL="mongodb://mongodb.virai.fun:27017/catalogue"
+// highlight-end
+ExecStart=/bin/node /app/server.js
+SyslogIdentifier=catalogue
+
+[Install]
+WantedBy=multi-user.target
+
+
+mongosh --host mongodb.virai.fun </app/db/master-data.js
+
+
+
+
+[Unit]
+Description = User Service
+[Service]
+User=roboshop
+Environment=MONGO=true
+// highlight-start
+Environment=REDIS_URL='redis://redis.virai.fun:6379'
+Environment=MONGO_URL="mongodb://mongodb.virai.fun:27017/users"
+// highlight-end
+ExecStart=/bin/node /app/server.js
+SyslogIdentifier=user
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+
+
+
+[Unit]
+Description = Cart Service
+[Service]
+User=roboshop
+// highlight-start
+Environment=REDIS_HOST=redis.virai.fun
+Environment=CATALOGUE_HOST=catalogue.virai.fun
+Environment=CATALOGUE_PORT=8080
+// highlight-end
+ExecStart=/bin/node /app/server.js
+SyslogIdentifier=cart
+
+[Install]
+WantedBy=multi-user.target
